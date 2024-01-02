@@ -8,4 +8,73 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // url      = "postgres://postgres:g164fA-CECa-ebfBC+*142E4G6E*gB6g@roundhouse.proxy.rlwy.net:31089/railway"
+}
+
+// datasource db {
+//   provider = "postgresql"
+//   url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+//   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+// }
+
+// datasource db {
+//   provider = "sqlserver"
+//   url      = env("DATABASE_URL")
+// }
+
+model User {
+  id          String       @id @default(uuid())
+  name        String?      @db.VarChar(50)
+  surname     String?      @db.VarChar(50)
+  email       String?      @unique @db.VarChar(55)
+  password    String?      @db.VarChar(50)
+  headquarter String?      @db.VarChar(50)
+  cycle       String?      @db.VarChar(2)
+  carrer      String?      @db.VarChar(30)
+  Access      Access?
+  postDetail  postDetail[]
+}
+
+//node 1 - Integrated for: User
+model Access {
+  id             String  @id @default(uuid())
+  about          Boolean @default(false)
+  posts          Boolean @default(false)
+  dashboardUsers Boolean @default(false)
+  dashboardPosts Boolean @default(false)
+  idUser         String? @unique
+  User           User?   @relation(fields: [idUser], references: [id])
+}
+
+model postScope {
+  id                    String  @id @default(uuid())
+  architecture          Boolean @default(false)
+  industrialEngineering Boolean @default(false)
+  systemsEngineering    Boolean @default(false)
+  civilEngineering      Boolean @default(false)
+  idPost                String? @unique
+  Post                  Post?   @relation(fields: [idPost], references: [id])
+}
+
+//node 2 - Integrated for: postScope
+model Post {
+  id          String       @id @default(uuid())
+  title       String       @db.VarChar(50)
+  description String
+  image       Json?
+  postDetail  postDetail[]
+  postScope   postScope?
+}
+
+//node 3 - Integrated for: Post - User
+model postDetail {
+  // id     String   @id @default(uuid())
+  idUser String
+  User   User     @relation(fields: [idUser], references: [id])
+  idPost String
+  Post   Post     @relation(fields: [idPost], references: [id])
+  iLove  Boolean?
+  iLike  Boolean?
+
+  @@id([idUser, idPost])
 }
