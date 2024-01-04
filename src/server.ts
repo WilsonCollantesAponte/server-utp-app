@@ -1,14 +1,12 @@
-// const express = require("express");
-// const morgan = require("morgan");
-
-// const server = express();
-
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import cors from "cors";
+import router from "./routes/route";
 
 const server: Express = express();
 
 server.use(cors());
 server.use(express.json());
+
+server.use("/", router);
 
 export default server;
